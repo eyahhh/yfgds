@@ -1,0 +1,48 @@
+local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/bloodball/-back-ups-for-libs/main/kav"))()
+local Window = Library.CreateLib("ESP", "DarkTheme")
+local Tab = Window:NewTab("ESP")
+local Section = Tab:NewSection("ESP Settings")
+
+local espAtivado = false
+
+local toggle = Section:NewToggle("Toggle ESP", "Ativa ou desativa o ESP", function(state)
+    espAtivado = state
+end)
+
+game:GetService("RunService").RenderStepped:Connect(function()
+    if espAtivado then
+        toggle:UpdateToggle("ESP: ON")
+    else
+        toggle:UpdateToggle("ESP: OFF")
+    end
+end)
+
+local function createESP(player)
+    local label = Instance.new("TextLabel")
+    label.Text = player.Name
+    label.Size = UDim2.new(0, 200, 0, 50)
+    label.Position = UDim2.new(0.5, -100, 0.5, -25)
+    label.Parent = game.Workspace
+    label.Name = "ESP_"..player.Name
+end
+
+local function removeESP(player)
+    local label = game.Workspace:FindFirstChild("ESP_"..player.Name)
+    if label then
+        label:Destroy()
+    end
+end
+
+game.Players.PlayerAdded:Connect(function(player)
+    player.CharacterAdded:Connect(function(character)
+        if espAtivado then
+            createESP(player)
+        end
+    end)
+end)
+
+game.Players.PlayerRemoving:Connect(function(player)
+    removeESP(player)
+end)
+
+toggle:UpdateToggle("ESP: OFF")
