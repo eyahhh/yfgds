@@ -1,51 +1,87 @@
+-- Carregar a biblioteca de GUI
+local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/bloodball/-back-ups-for-libs/main/kav.lua"))()
+
+-- Criar a janela da GUI com um tamanho menor
+local Window = Library.CreateLib("ESP", "DarkTheme")
+Window:SetSize(200, 250) -- Define o tamanho da janela
+
+-- Criar um botão de minimização para a janela da GUI
+local minimizeButton = Window:NewButton("Minimize", "Minimize the ESP window", function()
+    Window:Toggle()
+end)
+
+-- Criar uma nova aba na janela
+local Tab = Window:NewTab("ESP")
+
+-- Criar uma seção na aba para o ESP com uma fonte menor
+local ESPSection = Tab:NewSection("ESP Settings")
+ESPSection:SetNameFontSize(16) -- Define o tamanho da fonte do nome da seção
+
+-- Estado inicial do ESP (desativado)
 local espAtivado = false
-local transparencyValue = 0.5 -- Valor de transparência ajustável
 
-local function applyESP(player)
-    for _, part in ipairs(player.Character:GetDescendants()) do
-        if part:IsA("BasePart") then
-            local transparency = Instance.new("NumberValue")
-            transparency.Name = "ESP_Transparency"
-            transparency.Value = transparencyValue
-            transparency.Parent = part
-        end
-    end
-end
-
-local function removeESP(player)
-    for _, part in ipairs(player.Character:GetDescendants()) do
-        if part.Name == "ESP_Transparency" then
-            part:Destroy()
-        end
-    end
-end
-
-game.Players.PlayerAdded:Connect(function(player)
-    player.CharacterAdded:Connect(function(character)
-        if espAtivado then
-            applyESP(player)
-        end
-    end)
-end)
-
-game.Players.PlayerRemoving:Connect(function(player)
-    removeESP(player)
-end)
-
+-- Função para ativar ou desativar o ESP
 local function toggleESP(state)
     espAtivado = state
     if espAtivado then
+        print("ESP ativado")
+        -- Ativar o ESP
         for _, player in ipairs(game.Players:GetPlayers()) do
             applyESP(player)
         end
     else
+        print("ESP desativado")
+        -- Desativar o ESP
         for _, player in ipairs(game.Players:GetPlayers()) do
             removeESP(player)
         end
     end
 end
 
--- Chamada inicial para garantir que o ESP esteja desativado no início
-toggleESP(false)
+-- Função para aplicar o ESP a um jogador
+local function applyESP(player)
+    -- Verificar se o jogador tem um personagem e o ESP está ativado
+    if player.Character and espAtivado then
+        -- Percorrer todas as partes do personagem do jogador
+        for _, part in ipairs(player.Character:GetDescendants()) do
+            if part:IsA("BasePart") then
+                -- Adicionar um efeito de transparência ao ESP
+                local transparency = Instance.new("NumberValue")
+                transparency.Name = "ESP_Transparency"
+                transparency.Value = 0.5
+                transparency.Parent = part
+            end
+        end
+    end
+end
 
--- Para ativar/desativar o ESP, você pode chamar toggleESP(true) para ativar ou toggleESP(false) para desativar
+-- Função para remover o ESP de um jogador
+local function removeESP(player)
+    -- Verificar se o jogador tem um personagem
+    if player.Character then
+        -- Percorrer todas as partes do personagem do jogador
+        for _, part in ipairs(player.Character:GetDescendants()) do
+            -- Verificar se há um efeito de transparência e removê-lo
+            if part.Name == "ESP_Transparency" then
+                part:Destroy()
+            end
+        end
+    end
+end
+
+-- Criar um botão de alternância na seção do ESP com uma fonte menor
+local toggleButton = ESPSection:NewToggle("Toggle ESP", "Ativa ou desativa o ESP", function(state)
+    toggleESP(state)
+end)
+toggleButton:SetState(false) -- Definir o estado inicial do botão de alternância
+toggleButton:SetFontSize(14) -- Define o tamanho da fonte do botão de alternância
+
+-- Criar um botão circular fora da GUI com a imagem fornecida
+local outsideButton = Instance.new("ImageButton")
+outsideButton.Position = UDim2.new(1, 10, 0.5, 0) -- Posição do botão
+outsideButton.AnchorPoint = Vector2.new(1, 0.5)
+outsideButton.Size = UDim2.new(0, 40, 0, 40) -- Tamanho do botão
+outsideButton.BackgroundTransparency = 1 -- Tornar o fundo transparente
+outsideButton.Image = "https://store-images.s-microsoft.com/image/apps.4083.14191174512742283.25b58903-5b4d-47c0-959c-c79a5aabf46c.17e473bf-b171-4bc5-b00e-f1a6f54977e1?h=576" -- Define a imagem de fundo do botão
+outsideButton.ImageColor3 = Color3.fromRGB(255, 255, 255) -- Define a cor da imagem (branca)
+outsideButton.Parent = game.CoreGui -- Adiciona o botão à interface do usuário principal do jogo
