@@ -1,37 +1,5 @@
-local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/bloodball/-back-ups-for-libs/main/kav"))()
-local Window = Library.CreateLib("ESP", "DarkTheme")
-local Tab = Window:NewTab("ESP")
-local Section = Tab:NewSection("ESP Settings")
-
 local espAtivado = false
 local transparencyValue = 0.5 -- Valor de transparência ajustável
-
-local toggle = Section:NewToggle("Toggle ESP", "Ativa ou desativa o ESP", function(state)
-    espAtivado = state
-    if espAtivado then
-        for _, player in ipairs(game.Players:GetPlayers()) do
-            applyESP(player)
-        end
-    else
-        for _, player in ipairs(game.Players:GetPlayers()) do
-            removeESP(player)
-        end
-    end
-end)
-
-game.Players.PlayerAdded:Connect(function(player)
-    player.CharacterAdded:Connect(function(character)
-        if espAtivado then
-            applyESP(player)
-        end
-    end)
-end)
-
-game.Players.PlayerRemoving:Connect(function(player)
-    removeESP(player)
-end)
-
-toggle:UpdateToggle("ESP: OFF")
 
 local function applyESP(player)
     for _, part in ipairs(player.Character:GetDescendants()) do
@@ -51,3 +19,33 @@ local function removeESP(player)
         end
     end
 end
+
+game.Players.PlayerAdded:Connect(function(player)
+    player.CharacterAdded:Connect(function(character)
+        if espAtivado then
+            applyESP(player)
+        end
+    end)
+end)
+
+game.Players.PlayerRemoving:Connect(function(player)
+    removeESP(player)
+end)
+
+local function toggleESP(state)
+    espAtivado = state
+    if espAtivado then
+        for _, player in ipairs(game.Players:GetPlayers()) do
+            applyESP(player)
+        end
+    else
+        for _, player in ipairs(game.Players:GetPlayers()) do
+            removeESP(player)
+        end
+    end
+end
+
+-- Chamada inicial para garantir que o ESP esteja desativado no início
+toggleESP(false)
+
+-- Para ativar/desativar o ESP, você pode chamar toggleESP(true) para ativar ou toggleESP(false) para desativar
