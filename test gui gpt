@@ -1,104 +1,80 @@
 -- Carregar a biblioteca de GUI
 local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/bloodball/-back-ups-for-libs/main/kav.lua"))()
 
--- Criar a GUI
-local Window = Library.CreateLib("Blade Ball GUI", "DarkTheme")
-local Tab = Window:NewTab("Configurações")
-local Section = Tab:NewSection("Opções")
+-- Criar uma função para gerar a GUI
+local function createGUI()
+    -- Criar a GUI
+    local Window = Library.CreateLib("Lightz HUB", "DarkTheme")
+    local Tab = Window:NewTab("Configurações")
+    local Section = Tab:NewSection("Opções")
 
--- Variável para controlar a velocidade
-local speedValue = 16 -- Velocidade padrão
- 
--- Função para atualizar o rótulo de velocidade na GUI
-local function updateSpeedLabel()
-    Section.speedLabel:UpdateLabel("Speed: " .. speedValue)
-end
+    -- Variável para controlar a velocidade
+    local speedValue = 16 -- Velocidade padrão
 
--- Função para diminuir a velocidade
-local function decreaseSpeed()
-    if speedValue > 1 then
-        speedValue = speedValue - 1
+    -- Função para atualizar o rótulo de velocidade na GUI
+    local function updateSpeedLabel()
+        Section.speedLabel:UpdateLabel("Speed: " .. speedValue)
+    end
+
+    -- Função para diminuir a velocidade
+    local function decreaseSpeed()
+        if speedValue > 1 then
+            speedValue = speedValue - 1
+            updateSpeedLabel()
+        end
+    end
+
+    -- Função para aumentar a velocidade
+    local function increaseSpeed()
+        speedValue = speedValue + 1
         updateSpeedLabel()
     end
-end
 
--- Função para aumentar a velocidade
-local function increaseSpeed()
-    speedValue = speedValue + 1
-    updateSpeedLabel()
-end
+    -- Criar botão "Speed Changer" na GUI
+    local speedButton = Section:NewButton("Speed Changer", "Ajusta a velocidade do jogador", function()
+        -- Criar a GUI para ajustar a velocidade
+        local speedWindow = Library:CreateWindow("Speed Changer")
+        local speedSection = speedWindow:NewSection("Speed Options")
 
--- Função para lidar com o clique no botão de diminuir velocidade
-local function onDecreaseButtonClicked()
-    decreaseSpeed()
-end
+        -- Criar rótulo para exibir a velocidade atual
+        speedSection.speedLabel = speedSection:NewLabel("Speed: " .. speedValue)
 
--- Função para lidar com o clique no botão de aumentar velocidade
-local function onIncreaseButtonClicked()
-    increaseSpeed()
-end
-
--- Criar botão "Speed Changer" na GUI
-local speedButton = Section:NewButton("Speed Changer", "Ajusta a velocidade do jogador", function()
-    -- Criar a GUI para ajustar a velocidade
-    local speedWindow = Library:CreateWindow("Speed Changer")
-    local speedSection = speedWindow:NewSection("Speed Options")
-    
-    -- Criar rótulo para exibir a velocidade atual
-    speedSection.speedLabel = speedSection:NewLabel("Speed: " .. speedValue)
-    
-    -- Criar botão para diminuir a velocidade
-    speedSection:NewButton("-", "Diminui a velocidade", function()
-        decreaseSpeed()
-    end)
-    
-    -- Criar botão para aumentar a velocidade
-    speedSection:NewButton("+", "Aumenta a velocidade", function()
-        increaseSpeed()
-    end)
-end)
-
--- Inserir a GUI em um objeto GUI existente no jogo, como um Frame
-local guiParent = script.Parent -- O objeto pai deste LocalScript
-Window:SetParent(guiParent)
-
--- Adicionar funcionalidade de arrastar a GUI
-local UIS = game:GetService("UserInputService")
-local gui = script.Parent -- A GUI será movida pelo seu pai, ou seja, o objeto que contém este script
-
-local dragging
-local dragInput
-local dragStart
-local startPos
-
-local function updateInput(input)
-    local delta = input.Position - dragStart
-    local guiPos = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
-    gui.Position = guiPos
-end
-
-gui.InputBegan:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-        dragging = true
-        dragStart = input.Position
-        startPos = gui.Position
-
-        input.Changed:Connect(function()
-            if input.UserInputState == Enum.UserInputState.End then
-                dragging = false
-            end
+        -- Criar botão para diminuir a velocidade
+        speedSection:NewButton("-", "Diminui a velocidade", function()
+            decreaseSpeed()
         end)
-    end
-end)
 
-gui.InputChanged:Connect(function(input)
-    if (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) and dragging then
-        dragInput = input
-    end
-end)
+        -- Criar botão para aumentar a velocidade
+        speedSection:NewButton("+", "Aumenta a velocidade", function()
+            increaseSpeed()
+        end)
+    end)
 
-UIS.InputChanged:Connect(function(input)
-    if input == dragInput and dragging then
-        updateInput(input)
+    -- Inserir a GUI em um objeto GUI existente no jogo, como um Frame
+    local guiParent = script.Parent -- O objeto pai deste LocalScript
+    Window:SetParent(guiParent)
+
+    -- Adicionar funcionalidade de arrastar a GUI
+    local UIS = game:GetService("UserInputService")
+    local gui = script.Parent -- A GUI será movida pelo seu pai, ou seja, o objeto que contém este script
+
+    local dragging
+    local dragInput
+    local dragStart
+    local startPos
+
+    local function updateInput(input)
+        local delta = input.Position - dragStart
+        local guiPos = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+        gui.Position = guiPos
     end
-end)
+
+    gui.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+            dragging = true
+            dragStart = input.Position
+            startPos = gui.Position
+
+            input.Changed:Connect(function()
+                if input.UserInputState == Enum.UserInputState.End then
+                    dr
