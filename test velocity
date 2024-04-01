@@ -1,0 +1,15 @@
+-- Carregar a biblioteca de GUI
+local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/bloodball/-back-ups-for-libs/main/kav.lua"))()
+
+-- Criar a janela da GUI com um tamanho menor
+local Window = Library.CreateLib("Player Speed", "DarkTheme")
+Window:SetSize(200, 200) -- Define o tamanho da janela
+
+-- Criar um slider para ajustar a velocidade do jogador
+local speedSlider = Window:NewSlider("Velocidade do Jogador", "Ajuste a velocidade do seu personagem", 200, 0, function(value)
+    local player = game.Players.LocalPlayer
+    if player.Character and player.Character:FindFirstChildOfClass("Humanoid") then
+        player.Character.Humanoid.WalkSpeed = value / 10 -- Normalizar o valor para um intervalo entre 0 e 20
+    end
+end)
+speedSlider:SetDefaultValue(16) -- Definir a velocidade padrão como 16
