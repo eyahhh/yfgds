@@ -1,0 +1,124 @@
+-- Variável para rastrear o estado do esp
+local espAtivado = false
+
+-- Função para ativar/desativar o esp
+local function alternarESP()
+    espAtivado = not espAtivado
+    if espAtivado then
+        -- Ativar o esp: criar e conectar os manipuladores de evento para detectar jogadores
+        game.Players.PlayerAdded:Connect(function(player)
+            local label = Instance.new("TextLabel")
+            label.Text = player.Name
+            label.Size = UDim2.new(0, 200, 0, 50)
+            label.Position = UDim2.new(0.5, -100, 0.5, -25)
+            label.Parent = game.Workspace
+            label.Name = "ESP_"..player.Name
+        end)
+        game.Players.PlayerRemoving:Connect(function(player)
+            game.Workspace:FindFirstChild("ESP_"..player.Name):Destroy()
+        end)
+    else
+        -- Desativar o esp: desconectar todos os manipuladores de evento e remover todas as instâncias de labels ESP
+        game.Players.PlayerAdded:Disconnect()
+        game.Players.PlayerRemoving:Disconnect()
+        for _, child in ipairs(game.Workspace:GetChildren()) do
+            if child.Name:sub(1, 4) == "ESP_" then
+                child:Destroy()
+            end
+        end
+    end
+end
+
+-- Função para criar uma nova aba
+local function criarAba(nome)
+    local aba = Instance.new("Frame")
+    aba.Name = nome
+    aba.Size = UDim2.new(1, 0, 1, 0)
+    aba.Visible = false
+    aba.Parent = game.Players.LocalPlayer.PlayerGui
+
+    return aba
+end
+
+-- Função para criar um botão de aba
+local function criarBotaoAba(nome, aba)
+    local botao = Instance.new("TextButton")
+    botao.Text = nome
+    botao.Size = UDim2.new(0, 100, 0, 50)
+    botao.Position = UDim2.new(0, (#game.Players.LocalPlayer.PlayerGui:GetChildren() - 1) * 100, 0, 0)
+    botao.Parent = game.Players.LocalPlayer.PlayerGui
+    botao.MouseButton1Click:Connect(function()
+        -- Esconde todas as abas
+        for _, child in ipairs(game.Players.LocalPlayer.PlayerGui:GetChildren()) do
+            if child:IsA("Frame") then
+                child.Visible = false
+            end
+        end
+        -- Mostra a aba correspondente ao botão
+        aba.Visible = true
+    end)
+
+    return botao
+end
+
+-- Função para tornar um objeto arrastável
+local function tornarArrastavel(objeto)
+    local inputService = game:GetService("UserInputService")
+    local mouse = game.Players.LocalPlayer:GetMouse()
+    local touchStarted = false
+    local posicaoInicial
+    objeto.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+            touchStarted = true
+            if input.UserInputType == Enum.UserInputType.MouseButton1 then
+                posicaoInicial = objeto.Position - UDim2.new(0, mouse.X, 0, mouse.Y)
+            else
+                posicaoInicial = objeto.Position - UDim2.new(0, input.Position.X, 0, input.Position.Y)
+            end
+        end
+    end)
+    objeto.InputEnded:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+            touchStarted = false
+        end
+    end)
+    inputService.InputChanged:Connect(function(input)
+        if touchStarted and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
+            if input.UserInputType == Enum.UserInputType.MouseMovement then
+                objeto.Position = UDim2.new(0, mouse.X, 0, mouse.Y) + posicaoInicial
+            else
+                objeto.Position = UDim2.new(0, input.Position.X, 0, input.Position.Y) + posicaoInicial
+            end
+        end
+    end)
+end
+
+-- Função principal
+local function main()
+    -- Cria uma aba "ESP"
+    local abaESP = criarAba("ESP")
+    local botaoAbaESP = criarBotaoAba("ESP", abaESP)
+
+    -- Cria uma aba "Configurações"
+    local abaConfiguracoes = criarAba("Configurações")
+    local botaoAbaConfiguracoes = criarBotaoAba("Configurações", abaConfiguracoes)
+
+    -- Cria um botão para ativar/desativar o ESP
+    local botaoESP = Instance.new("TextButton")
+    botaoESP.Text = "ESP: OFF"
+    botaoESP.Size = UDim2.new(0, 100, 0, 50)
+    botaoESP.Position = UDim2.new(0.5, -50, 0.5, -25)
+    botaoESP.Parent = abaESP
+    tornarArrastavel(botaoESP) -- Torna o botão arrastável
+    botaoESP.MouseButton1Click:Connect(function()
+        if espAtivado then
+            botaoESP.Text = "ESP: OFF"
+        else
+            botaoESP.Text = "ESP: ON"
+        end
+        alternarESP()
+    end)
+end
+
+-- Chama a função principal
+main()
