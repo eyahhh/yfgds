@@ -75,13 +75,3 @@ local toggleButton = ESPSection:NewToggle("Toggle ESP", "Ativa ou desativa o ESP
 end)
 toggleButton:SetState(false) -- Definir o estado inicial do botão de alternância
 toggleButton:SetFontSize(14) -- Define o tamanho da fonte do botão de alternância
-
--- Criar um botão circular fora da GUI com a imagem fornecida
-local outsideButton = Instance.new("ImageButton")
-outsideButton.Position = UDim2.new(1, -50, 0, 100) -- Posição do botão
-outsideButton.AnchorPoint = Vector2.new(1, 0)
-outsideButton.Size = UDim2.new(0, 50, 0, 50) -- Tamanho do botão
-outsideButton.BackgroundTransparency = 1 -- Tornar o fundo transparente
-outsideButton.Image = "https://store-images.s-microsoft.com/image/apps.4083.14191174512742283.25b58903-5b4d-47c0-959c-c79a5aabf46c.17e473bf-b171-4bc5-b00e-f1a6f54977e1?h=576" -- Define a imagem de fundo do botão
-outsideButton.ImageColor3 = Color3.fromRGB(255, 255, 255) -- Define a cor da imagem (branca)
-outsideButton.Parent = game:GetService("CoreGui") -- Adiciona o botão à interface do usuário principal do jogo
