@@ -1,77 +1,104 @@
 -- Carregar a biblioteca de GUI
 local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/bloodball/-back-ups-for-libs/main/kav.lua"))()
 
--- Criar a janela da GUI com um tamanho menor
-local Window = Library.CreateLib("ESP", "DarkTheme")
-Window:SetSize(200, 250) -- Define o tamanho da janela
+-- Criar a GUI
+local Window = Library.CreateLib("Blade Ball GUI", "DarkTheme")
+local Tab = Window:NewTab("Configurações")
+local Section = Tab:NewSection("Opções")
 
--- Criar um botão de minimização para a janela da GUI
-local minimizeButton = Window:NewButton("Minimize", "Minimize the ESP window", function()
-    Window:Toggle()
+-- Variável para controlar a velocidade
+local speedValue = 16 -- Velocidade padrão
+ 
+-- Função para atualizar o rótulo de velocidade na GUI
+local function updateSpeedLabel()
+    Section.speedLabel:UpdateLabel("Speed: " .. speedValue)
+end
+
+-- Função para diminuir a velocidade
+local function decreaseSpeed()
+    if speedValue > 1 then
+        speedValue = speedValue - 1
+        updateSpeedLabel()
+    end
+end
+
+-- Função para aumentar a velocidade
+local function increaseSpeed()
+    speedValue = speedValue + 1
+    updateSpeedLabel()
+end
+
+-- Função para lidar com o clique no botão de diminuir velocidade
+local function onDecreaseButtonClicked()
+    decreaseSpeed()
+end
+
+-- Função para lidar com o clique no botão de aumentar velocidade
+local function onIncreaseButtonClicked()
+    increaseSpeed()
+end
+
+-- Criar botão "Speed Changer" na GUI
+local speedButton = Section:NewButton("Speed Changer", "Ajusta a velocidade do jogador", function()
+    -- Criar a GUI para ajustar a velocidade
+    local speedWindow = Library:CreateWindow("Speed Changer")
+    local speedSection = speedWindow:NewSection("Speed Options")
+    
+    -- Criar rótulo para exibir a velocidade atual
+    speedSection.speedLabel = speedSection:NewLabel("Speed: " .. speedValue)
+    
+    -- Criar botão para diminuir a velocidade
+    speedSection:NewButton("-", "Diminui a velocidade", function()
+        decreaseSpeed()
+    end)
+    
+    -- Criar botão para aumentar a velocidade
+    speedSection:NewButton("+", "Aumenta a velocidade", function()
+        increaseSpeed()
+    end)
 end)
 
--- Criar uma nova aba na janela
-local Tab = Window:NewTab("ESP")
+-- Inserir a GUI em um objeto GUI existente no jogo, como um Frame
+local guiParent = script.Parent -- O objeto pai deste LocalScript
+Window:SetParent(guiParent)
 
--- Criar uma seção na aba para o ESP com uma fonte menor
-local ESPSection = Tab:NewSection("ESP Settings")
-ESPSection:SetNameFontSize(16) -- Define o tamanho da fonte do nome da seção
+-- Adicionar funcionalidade de arrastar a GUI
+local UIS = game:GetService("UserInputService")
+local gui = script.Parent -- A GUI será movida pelo seu pai, ou seja, o objeto que contém este script
 
--- Estado inicial do ESP (desativado)
-local espAtivado = false
+local dragging
+local dragInput
+local dragStart
+local startPos
 
--- Função para ativar ou desativar o ESP
-local function toggleESP(state)
-    espAtivado = state
-    if espAtivado then
-        print("ESP ativado")
-        -- Ativar o ESP
-        for _, player in ipairs(game.Players:GetPlayers()) do
-            applyESP(player)
-        end
-    else
-        print("ESP desativado")
-        -- Desativar o ESP
-        for _, player in ipairs(game.Players:GetPlayers()) do
-            removeESP(player)
-        end
-    end
+local function updateInput(input)
+    local delta = input.Position - dragStart
+    local guiPos = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+    gui.Position = guiPos
 end
 
--- Função para aplicar o ESP a um jogador
-local function applyESP(player)
-    -- Verificar se o jogador tem um personagem e o ESP está ativado
-    if player.Character and espAtivado then
-        -- Percorrer todas as partes do personagem do jogador
-        for _, part in ipairs(player.Character:GetDescendants()) do
-            if part:IsA("BasePart") then
-                -- Adicionar um efeito de transparência ao ESP
-                local transparency = Instance.new("NumberValue")
-                transparency.Name = "ESP_Transparency"
-                transparency.Value = 0.5
-                transparency.Parent = part
+gui.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+        dragging = true
+        dragStart = input.Position
+        startPos = gui.Position
+
+        input.Changed:Connect(function()
+            if input.UserInputState == Enum.UserInputState.End then
+                dragging = false
             end
-        end
+        end)
     end
-end
-
--- Função para remover o ESP de um jogador
-local function removeESP(player)
-    -- Verificar se o jogador tem um personagem
-    if player.Character then
-        -- Percorrer todas as partes do personagem do jogador
-        for _, part in ipairs(player.Character:GetDescendants()) do
-            -- Verificar se há um efeito de transparência e removê-lo
-            if part.Name == "ESP_Transparency" then
-                part:Destroy()
-            end
-        end
-    end
-end
-
--- Criar um botão de alternância na seção do ESP com uma fonte menor
-local toggleButton = ESPSection:NewToggle("Toggle ESP", "Ativa ou desativa o ESP", function(state)
-    toggleESP(state)
 end)
-toggleButton:SetState(false) -- Definir o estado inicial do botão de alternância
-toggleButton:SetFontSize(14) -- Define o tamanho da fonte do botão de alternância
+
+gui.InputChanged:Connect(function(input)
+    if (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) and dragging then
+        dragInput = input
+    end
+end)
+
+UIS.InputChanged:Connect(function(input)
+    if input == dragInput and dragging then
+        updateInput(input)
+    end
+end)
