@@ -1,16 +1,4 @@
--- Criar a GUI
-local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/bloodball/-back-ups-for-libs/main/kav.lua"))()
-local Window = Library.CreateLib("Lightz HUB", "DarkTheme")
-local Tab = Window:NewTab("Configurações")
-local Section = Tab:NewSection("Opções")
-
--- Criar uma caixa de texto para exibir a mensagem de saudação
-local greetingLabel = Instance.new("TextLabel")
-greetingLabel.Text = "Olá usuário! Obrigado por usar nosso script Light Hub."
-greetingLabel.TextSize = 20
-greetingLabel.Size = UDim2.new(0, 300, 0, 50)
-greetingLabel.Position = UDim2.new(0.5, -150, 0.5, -25)
-greetingLabel.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+print("executando. . . ")
 
 -- Variável para controlar o estado do Fly
 local flyAtivado = false
@@ -27,10 +15,63 @@ local function toggleFly()
     end
 end
 
+-- Criar a GUI
+local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/bloodball/-back-ups-for-libs/main/kav.lua"))()
+local Window = Library.CreateLib("Lightz HUB", "DarkTheme")
+local Tab = Window:NewTab("Configurações")
+local Section = Tab:NewSection("Opções")
+
+-- Criar uma caixa de texto para exibir a mensagem de saudação
+local greetingLabel = Instance.new("TextLabel")
+greetingLabel.Text = "Olá usuário! Obrigado por usar nosso script Light Hub."
+greetingLabel.TextSize = 20
+greetingLabel.Size = UDim2.new(0, 300, 0, 50)
+greetingLabel.Position = UDim2.new(0.5, -150, 0.5, -25)
+greetingLabel.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+
 -- Criar botão "Fly" na GUI
 local flyButton = Section:NewButton("Fly v3", "Ativa ou desativa o Fly", toggleFly)
 
 -- Adicionar funcionalidade de arrastar a GUI
+local UIS = game:GetService("UserInputService")
+local gui = Window.Main -- A GUI será movida pelo objeto principal da janela
+
+local dragging = false
+local dragInput
+local dragStart
+local startPos
+
+local function updateInput(input)
+    local delta = input.Position - dragStart
+    local guiPos = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+    gui.Position = guiPos
+end
+
+gui.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+        dragging = true
+        dragStart = input.Position
+        startPos = gui.Position
+
+        input.Changed:Connect(function()
+            if input.UserInputState == Enum.UserInputState.End then
+                dragging = false
+            end
+        end)
+    end
+end)
+
+gui.InputChanged:Connect(function(input)
+    if (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) and dragging then
+        dragInput = input
+    end
+end)
+
+UIS.InputChanged:Connect(function(input)
+    if input == dragInput and dragging then
+        updateInput(input)
+    end
+end⬤ a GUI
 local UIS = game:GetService("UserInputService")
 local gui = Window.Main -- A GUI será movida pelo objeto principal da janela
 
