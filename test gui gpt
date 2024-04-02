@@ -1,14 +1,16 @@
 print("executando. . . ")
--- Variável para controlar o estado do Fly
-local flyAtivado = false
 
--- Criar botão "Fly" na GUI
-local flyButton = Section:NewButton("Fly v3", "Ativa ou desativa o Fly", toggleFly)
 -- Criar a GUI
 local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/bloodball/-back-ups-for-libs/main/kav.lua"))()
 local Window = Library.CreateLib("Lightz HUB", "DarkTheme")
 local Tab = Window:NewTab("Configurações")
 local Section = Tab:NewSection("Opções")
+
+-- Criar botão "Fly" na GUI
+local flyButton = Section:NewButton("Fly v3", "Ativa ou desativa o Fly", toggleFly)
+
+-- Variável para controlar o estado do Fly
+local flyAtivado = false
 
 -- Criar uma caixa de texto para exibir a mensagem de saudação
 local greetingLabel = Instance.new("TextLabel")
@@ -17,9 +19,6 @@ greetingLabel.TextSize = 20
 greetingLabel.Size = UDim2.new(0, 300, 0, 50)
 greetingLabel.Position = UDim2.new(0.5, -150, 0.5, -25)
 greetingLabel.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
-
--- Criar botão "Fly" na GUI
-local flyButton = Section:NewButton("Fly v3", "Ativa ou desativa o Fly", toggleFly)
 
 -- Adicionar funcionalidade de arrastar a GUI
 local UIS = game:GetService("UserInputService")
