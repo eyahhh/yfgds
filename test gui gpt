@@ -2,18 +2,8 @@ print("executando. . . ")
 -- Variável para controlar o estado do Fly
 local flyAtivado = false
 
--- Função para ativar ou desativar o Fly
-local function toggleFly()
-    flyAtivado = not flyAtivado
-    if flyAtivado then
-        print("Fly ativado!")
-        loadstring(game:HttpGet('https://pastebin.com/raw/YSL3xKYU'))() -- Carregar o script do "Fly v3"
-    else
-        print("Fly desativado!")
-        -- Adicione aqui o código para desativar o Fly, se necessário
-    end
-end
-
+-- Criar botão "Fly" na GUI
+local flyButton = Section:NewButton("Fly v3", "Ativa ou desativa o Fly", toggleFly)
 -- Criar a GUI
 local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/bloodball/-back-ups-for-libs/main/kav.lua"))()
 local Window = Library.CreateLib("Lightz HUB", "DarkTheme")
