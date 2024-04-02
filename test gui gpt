@@ -1,4 +1,3 @@
-lua
 -- Mensagem de saudação
 print("Olá usuário! Obrigado por usar nosso script Light Hub.")
 
