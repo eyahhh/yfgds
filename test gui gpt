@@ -1,13 +1,6 @@
+lua
 -- Mensagem de saudação
 print("Olá usuário! Obrigado por usar nosso script Light Hub.")
-
--- Simulação de uma barra de carregamento
-local loadingBarLength = 20
-for _ = 1, loadingBarLength do
-    io.write("=")
-    wait(0.1)  -- Atraso para simular o carregamento
-end
-print(" Script carregado com sucesso!")
 
 -- Variável para controlar o estado do Fly
 local flyAtivado = false
@@ -35,7 +28,7 @@ local flyButton = Section:NewButton("Fly v3", "Ativa ou desativa o Fly", toggleF
 
 -- Adicionar funcionalidade de arrastar a GUI
 local UIS = game:GetService("UserInputService")
-local gui = script.Parent -- A GUI será movida pelo seu pai, ou seja, o objeto que contém este script
+local gui = script.Parent.Parent -- A GUI será movida pelo seu pai, ou seja, o objeto que contém este script
 
 local dragging = false
 local dragInput
